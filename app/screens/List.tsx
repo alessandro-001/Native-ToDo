@@ -1,7 +1,7 @@
 import { View, Text, Button, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { addDoc, collection, onSnapshot } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Entypo } from '@expo/vector-icons';
 
@@ -41,18 +41,20 @@ const List = ({ navigation }: any) => {
     }
 
     const renderTodo = ({ item }: any) => {
+        const ref = doc(FIRESTORE_DB, `todos/${item.id}`);
 
         const toggleDone = async() => {
-
+            updateDoc(ref, { done: !item.done })
         }
-        const deleteTask = async() => {
 
+        const deleteTask = async() => {
+            deleteDoc(ref);
         }
 
         return (
             <View style={styles.todoContainer}>
                 <TouchableOpacity onPress={toggleDone} style={styles.todo}>
-                    {item.done && <Ionicons name='md-checkmark-circle' />}
+                    {item.done && <Ionicons name='md-checkmark-circle' size={30} color='green' />}
                     {!item.done && <Entypo name='circle' size={30} color='black' />}
                     <Text style={styles.todoText}>{item.title}</Text>
                 </TouchableOpacity>
