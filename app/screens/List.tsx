@@ -1,7 +1,16 @@
-import { View, Text, Button, StyleSheet, TextInput } from 'react-native'
+import { View, Text, Button, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { FIRESTORE_DB } from '../../firebaseConfig';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Entypo } from '@expo/vector-icons';
+
+export interface Todo {
+    title: string;
+    done: boolean;
+    id: string;
+
+}
 
 const List = ({ navigation }: any) => {
     const [todos, setTodos] = useState<any[]>([]);
@@ -11,13 +20,13 @@ const List = ({ navigation }: any) => {
         const todoRef = collection(FIRESTORE_DB, 'todos');
         const subscriber = onSnapshot(todoRef, {
             next: (snapshot) => {
-                const todos:any[]= [];
+                const todos: Todo[]= [];
                 snapshot.docs.forEach((doc) => {
                     console.log(doc.data());
                     todos.push({
                         id: doc.id,
                         ...doc.data(),
-                    });
+                    } as Todo);
                 });
                 setTodos(todos);
             },
@@ -29,6 +38,27 @@ const List = ({ navigation }: any) => {
     const addTodo = async () => {
         const doc =  await addDoc(collection(FIRESTORE_DB, 'todos'), { title: todo, done: false});
         setTodo('');
+    }
+
+    const renderTodo = ({ item }: any) => {
+
+        const toggleDone = async() => {
+
+        }
+        const deleteTask = async() => {
+
+        }
+
+        return (
+            <View style={styles.todoContainer}>
+                <TouchableOpacity onPress={toggleDone} style={styles.todo}>
+                    {item.done && <Ionicons name='md-checkmark-circle' />}
+                    {!item.done && <Entypo name='circle' size={30} color='black' />}
+                    <Text style={styles.todoText}>{item.title}</Text>
+                </TouchableOpacity>
+                <Ionicons name='trash-bin-outline' size={30} color='red' onPress={deleteTask} />
+            </View>
+        )
     }
 
   return (
@@ -44,9 +74,11 @@ const List = ({ navigation }: any) => {
         </View>
         {todos.length > 0 && (
             <View>
-                {todos.map((item) => (
-                    <Text key={item.id}>{item.title}</Text>
-                ))}
+                <FlatList 
+                    data={todos}
+                    renderItem={renderTodo}
+                    keyExtractor={(todo: Todo) => todo.id}
+                />
             </View>
         )}
     </View>
@@ -71,5 +103,21 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         backgroundColor: '#fff',
+    },
+    todoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'orange',
+        padding: 10,
+        marginVertical: 4,
+    },
+    todoText: {
+        flex: 1,
+        paddingHorizontal: 10,
+    },
+    todo: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
