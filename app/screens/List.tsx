@@ -1,9 +1,11 @@
 import { View, Text, Button, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { FIRESTORE_DB } from '../../firebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Entypo } from '@expo/vector-icons';
+import Details from './Details';
+import { NavigationProp } from '@react-navigation/native';
 
 export interface Todo {
     title: string;
@@ -12,7 +14,11 @@ export interface Todo {
 
 }
 
-const List = ({ navigation }: any) => {
+interface RouterProps {
+    navigation: NavigationProp<any, any>
+}
+
+const List = ({ navigation }: RouterProps) => {
     const [todos, setTodos] = useState<any[]>([]);
     const [todo, setTodo] = useState('');
 
@@ -65,24 +71,28 @@ const List = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-        <View style={styles.form}>
-            <TextInput 
-                style={styles.input}
-                placeholder='Add new task'
-                onChangeText={(text: string) => setTodo(text)}
-                value={todo}
-            />
-            <Button onPress={() => addTodo()} title='Add ToDo' disabled={todo === ''} />
-        </View>
-        {todos.length > 0 && (
-            <View>
-                <FlatList 
-                    data={todos}
-                    renderItem={renderTodo}
-                    keyExtractor={(todo: Todo) => todo.id}
-                />
+        <View style={styles.marginContainer}>
+            <View style={styles.form}>
+                <TextInput 
+                    style={styles.input}
+                    placeholder='Add new task'
+                    onChangeText={(text: string) => setTodo(text)}
+                    value={todo}
+                    />
+                <Button onPress={() => addTodo()} title='Add ToDo' disabled={todo === ''} />
             </View>
-        )}
+            {todos.length > 0 && (
+                <View>
+                    <FlatList 
+                        data={todos}
+                        renderItem={renderTodo}
+                        keyExtractor={(todo: Todo) => todo.id}
+                        />
+                </View>
+            
+            )}
+        <Button onPress={() => FIREBASE_AUTH.signOut()} title='Logout' />
+        </View>
     </View>
   )
 }
@@ -90,8 +100,13 @@ const List = ({ navigation }: any) => {
 export default List
 
 const styles = StyleSheet.create({
-    container: {
+    container: { 
+        flex: 1,
+        backgroundColor: '#1F2937',
+    },
+    marginContainer: {
         marginHorizontal: 20,
+        flex: 1,
     },
     form: {
         flexDirection: 'row',
@@ -112,6 +127,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'orange',
         padding: 10,
         marginVertical: 4,
+        borderRadius: 8,
     },
     todoText: {
         flex: 1,
