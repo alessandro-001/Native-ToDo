@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   View,
+  Image,
 } from 'react-native';
 import { FIREBASE_AUTH } from '../../firebaseConfig';
 import {
@@ -45,7 +46,15 @@ function Login() {
   };
 
   return (
-    <KeyboardAvoidingView behavior='padding' style={styles.container}>
+    
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View style={styles.imageContainer}>
+        <Image
+          source={require('../../assets/MyToDos.gif')}
+          style={styles.imageStyle}
+          resizeMode='contain'
+        />
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
           value={email}
@@ -82,7 +91,8 @@ export default Login;
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 20,
+    backgroundColor: '#1F2937',
+    paddingHorizontal: 30, 
     flex: 1,
     justifyContent: 'center',
   },
@@ -98,7 +108,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   buttonContainer: {
+    marginVertical: 10,
     flexDirection: 'column',
     justifyContent: 'space-between',
+  },
+  imageContainer: {
+    alignItems: 'center', 
+  },
+  imageStyle: {
+    width: 300, 
+    marginBottom: 20,
   },
 });

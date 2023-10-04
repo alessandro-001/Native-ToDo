@@ -81,6 +81,7 @@ const List = ({ navigation }: RouterProps) => {
                     />
                 <Button onPress={() => addTodo()} title='Add ToDo' disabled={todo === ''} />
             </View>
+            
             {todos.length > 0 && (
                 <View>
                     <FlatList 
@@ -91,8 +92,8 @@ const List = ({ navigation }: RouterProps) => {
                 </View>
             
             )}
-        <Button onPress={() => FIREBASE_AUTH.signOut()} title='Logout' />
         </View>
+        
     </View>
   )
 }
@@ -137,5 +138,8 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    logOutBtn: {
+        marginBottom: 40,
     },
 });
